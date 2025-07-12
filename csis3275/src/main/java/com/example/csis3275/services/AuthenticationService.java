@@ -11,23 +11,13 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AuthenticationService {
-    
+
     @Autowired
     private UserRepository userRepository;
     
     @Autowired
-    private PasswordEncoder passwordEncoder;
-    
-    @Autowired
     private AuthenticationManager authenticationManager;
 
-    public User signup(UserDTO input) {
-        User user = new User();
-        user.setUsername(input.getUsername());
-        user.setPasswordHash(passwordEncoder.encode(input.getPassword()));
-
-        return userRepository.save(user);
-    }
 
     public User authenticate(UserDTO input) {
         authenticationManager.authenticate(
