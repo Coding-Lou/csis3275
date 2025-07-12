@@ -7,3 +7,7 @@ spring.jpa.hibernate.ddl-auto=
 spring.jpa.properties.hibernate.dialect=
 spring.jpa.show-sql=
 spring.thymeleaf.cache=
+
+# JWT Configuration
+security.jwt.secret-key=
+security.jwt.expiration-time=
