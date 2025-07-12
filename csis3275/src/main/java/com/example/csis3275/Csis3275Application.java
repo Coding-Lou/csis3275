@@ -27,7 +27,7 @@ public class Csis3275Application {
 
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
-
+    
     public static void main(String[] args) {
 
         SpringApplication.run(Csis3275Application.class, args);
