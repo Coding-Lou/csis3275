@@ -38,8 +38,8 @@ public class Csis3275Application {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/", "/web/**").permitAll()
-                        .requestMatchers("/profile", "/create-experience", "/book-experience", "/etc").authenticated()
+                        .requestMatchers("/auth/**", "/", "/web/**", "/user/register").permitAll()
+                        .requestMatchers("/user/", "/create-experience", "/book-experience").authenticated()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -65,5 +65,6 @@ public class Csis3275Application {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(12);
     }
+
 
 }
