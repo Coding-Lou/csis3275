@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Protected Message</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 50px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .message-box { background: #d4edda; padding: 20px; border-radius: 5px; margin: 20px 0; }
+        .action-box { background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0; }
+        button { background: #007bff; color: white; padding: 10px 15px; border: none; cursor: pointer; margin: 5px; }
+        .token-info { background: #e9ecef; padding: 10px; font-family: monospace; font-size: 12px; word-break: break-all; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Protected Message Page</h2>
+        
+        <div class="message-box">
+            <h3 th:text="'Hello, ' + ${username} + '!'"></h3>
+            <p>🔒 This is a protected message that requires authentication!</p>
+            <p>You successfully accessed this page using your JWT token.</p>
+        </div>
+        
+        <div th:if="${actionResult}" class="message-box">
+            <p th:text="${actionResult}"></p>
+        </div>
+
+        <div class="action-box">
+            <h4>Perform Actions (Token Required)</h4>
+            <p>This action will submit a form with the token to demonstrate token passing:</p>
+            <form action="/web/action" method="post" style="display: inline;">
+                <input type="hidden" name="token" th:value="${token}"/>
+                <input type="hidden" name="action" value="update_profile"/>
+                <button type="submit">Update Profile</button>
+            </form>
+        </div> 
+        
+        <div class="token-info">
+            <strong>Token Info:</strong><br>
+            <span th:text="${token}"></span>
+        </div>
+        
+        <p><a href="/web/login">Logout</a></p>
+    </div>
+</body>
+</html>

@@ -38,7 +38,7 @@ public class Csis3275Application {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/").permitAll()
+                        .requestMatchers("/auth/**", "/", "/web/**").permitAll()
                         .requestMatchers("/profile", "/create-experience", "/book-experience", "/etc").authenticated()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session
