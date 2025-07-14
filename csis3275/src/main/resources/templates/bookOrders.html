@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{template1}"
+      lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<div layout:fragment="content">
+  <h1>List of Book Orders</h1>
+  <div class="container mt-2 pre-scrollable">
+    <div class="card-header"> </div>
+    <div class="card-body">
+      <form method="get" th:action="@{index}">
+        <label>Key Word</label>
+        <input type="text" name="keyword">
+        <button type="submit" class="btn-primary">Search</button>
+        <button type="submit" class="btn-primary">See All</button>
+      </form>
+      <table class="table">
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>User name</th>
+          <th>Experience Instance</th>
+          <th>Guide ID</th>
+          <th>Booking time</th>
+          <th>Tour start time</th>
+          <th>Order status</th>
+          <th>Transaction value</th>
+          <th>Payment type</th>
+          <th>Payment ID</th>
+          <th>Create time</th>
+          <th>Latest update time</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="order : ${listBookOrders}">
+          <td th:text="${order.orderId}"></td>
+          <td th:text="${order.user.getName()}"></td>
+          <td th:text="${order.experienceInstance.title}"></td>
+          <td th:text="${order.guideId}"></td>
+
+          <td th:text="${#temporals.format(order.bookingDateTime, 'yyyy-MM-dd-HH')}"></td>
+          <td th:text="${#temporals.format(order.tourStartDateTime, 'yyyy-MM-dd-HH')}"></td>
+
+          <td th:text="${order.orderStatus}"></td>
+          <td th:text="${order.transactionValue}"></td>
+          <td th:text="${order.paymentType}"></td>
+          <td th:text="${order.paymentId}"></td>
+
+          <td th:text="${#temporals.format(order.createdAt, 'yyyy-MM-dd-HH')}"></td>
+          <td th:text="${#temporals.format(order.updatedAt, 'yyyy-MM-dd-HH')}"></td>
+          <td>
+            <a class="btn btn-danger" onClick="return confirm('Are you sure you want to delete the record ?')" th:href="@{delete(id=${order.orderId})}">Delete</a>
+          </td>
+          <td>
+            <a class="btn btn-success" th:href="@{editBookOrders(id=${order.id})}"> Edit</a>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+
+      </script>
+    </div>
+  </div>
+</div>
+</body>
+</html>
