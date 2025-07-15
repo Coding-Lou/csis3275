@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Experiences</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f7f7;
+        }
+    </style>
+</head>
+<body class="antialiased">
+<div class="min-h-screen flex flex-col items-center py-10 px-4 sm:px-6 lg:px-8">
+    <form action="/experience/search" method="post" class="w-full max-w-4xl bg-white rounded-full shadow-lg p-2 flex items-center justify-between mb-12">
+        <input
+                type="text"
+                name="search"
+                placeholder="Search destinations, activities, and more..."
+                class="flex-grow py-3 px-6 text-lg text-gray-800 placeholder-gray-400 focus:outline-none rounded-full"
+                th:value="${param.search}"
+        />
+        <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-3 px-6 rounded-full shadow-md transition duration-300 ease-in-out flex items-center space-x-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+            </svg>
+            <span>Search</span>
+        </button>
+    </form>
+
+    <div class="w-full max-w-6xl mb-8">
+        <h2 class="text-3xl font-bold text-gray-800">Experiences Found</h2>
+        <div class="border-b border-gray-300 mt-4 mb-8"></div>
+    </div>
+
+    <div class="w-full max-w-6xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div th:each="experience : ${experiences}" 
+             class="bg-white rounded-xl shadow-md overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-lg">
+            <img
+                    th:src="@{'https://placehold.co/600x400/FF5A5F/FFFFFF?text=' + ${experience.title}}"
+                    th:alt="${experience.title}"
+                    class="w-full h-48 object-cover"
+                    onerror="this.onerror=null;this.src='https://placehold.co/600x400/FF5A5F/FFFFFF?text=Experience';"
+            >
+            <div class="p-6">
+                <h3 class="text-xl font-semibold text-gray-900 mb-2" th:text="${experience.title}">Experience Title</h3>
+                <p class="text-gray-600 text-sm mb-2" th:text="${experience.city + ', ' + experience.country}">Location</p>
+                <p class="text-gray-600 text-sm mb-4" th:text="${experience.shortDescription}">Short description</p>
+                <div class="flex items-center justify-between">
+                    <span class="text-lg font-bold text-gray-800" th:text="'$' + ${experience.price} + ' / person'">$0 / person</span>
+                    <span class="text-sm text-gray-500" th:text="'Max: ' + ${experience.maxParticipants} + ' people'">Max participants</span>
+                </div>
+            </div>
+        </div>
+        
+        <div th:if="${#lists.isEmpty(experiences)}" class="col-span-full text-center py-16">
+            <div class="text-gray-500">
+                <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">No experiences found</h3>
+                <p class="text-gray-500">There are no experiences available at the moment.</p>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
