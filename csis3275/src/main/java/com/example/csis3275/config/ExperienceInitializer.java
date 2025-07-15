@@ -107,8 +107,8 @@ public class ExperienceInitializer {
         // Instance 1: Friday at 7:00 PM
         ExperienceInstance instance1 = new ExperienceInstance();
         instance1.setExperience(experience);
-        instance1.setStartTime(baseTime.withHour(19).withMinute(0).withSecond(0)); // 7:00 PM
-        instance1.setEndTime(instance1.getStartTime().plusHours(2)); // 2 hours duration
+        instance1.setStartDateTime(baseTime.withHour(19).withMinute(0).withSecond(0)); // 7:00 PM
+        instance1.setEndDateTime(instance1.getStartDateTime().plusHours(2)); // 2 hours duration
         instance1.setAvailableSlots(experience.getMaxParticipants());
         instance1.setPrice(price);
         experienceInstanceRepository.save(instance1);
@@ -116,8 +116,8 @@ public class ExperienceInitializer {
         // Instance 2: Saturday at 7:00 PM
         ExperienceInstance instance2 = new ExperienceInstance();
         instance2.setExperience(experience);
-        instance2.setStartTime(baseTime.plusDays(1).withHour(19).withMinute(0).withSecond(0)); // Next day, 7:00 PM
-        instance2.setEndTime(instance2.getStartTime().plusHours(2));
+        instance2.setStartDateTime(baseTime.plusDays(1).withHour(19).withMinute(0).withSecond(0)); // Next day, 7:00 PM
+        instance2.setEndDateTime(instance2.getStartDateTime().plusHours(2));
         instance2.setAvailableSlots(experience.getMaxParticipants());
         instance2.setPrice(price);
         experienceInstanceRepository.save(instance2);
@@ -125,8 +125,8 @@ public class ExperienceInitializer {
         // Instance 3: Sunday at 2:00 PM (afternoon option)
         ExperienceInstance instance3 = new ExperienceInstance();
         instance3.setExperience(experience);
-        instance3.setStartTime(baseTime.plusDays(2).withHour(14).withMinute(0).withSecond(0)); // 2:00 PM
-        instance3.setEndTime(instance3.getStartTime().plusHours(2));
+        instance3.setStartDateTime(baseTime.plusDays(2).withHour(14).withMinute(0).withSecond(0)); // 2:00 PM
+        instance3.setEndDateTime(instance3.getStartDateTime().plusHours(2));
         instance3.setAvailableSlots(experience.getMaxParticipants());
         instance3.setPrice(price);
         experienceInstanceRepository.save(instance3);

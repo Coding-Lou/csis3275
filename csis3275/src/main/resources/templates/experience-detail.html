@@ -74,8 +74,8 @@
                         <div th:each="instance : ${experience.instances}" 
                              class="bg-gray-50 p-5 rounded-xl flex flex-col sm:flex-row justify-between items-start sm:items-center shadow-sm hover:shadow-md transition duration-200 ease-in-out cursor-pointer">
                             <div>
-                                <p class="text-lg font-semibold text-gray-800" th:text="${instance.startTime + ' to ' + instance.endTime}">Date and Time</p>
-                                <p class="text-sm text-gray-500 mt-1" th:text="'Duration: ' + ${T(java.time.Duration).between(instance.startTime, instance.endTime).toHours()} + ' hours'">Duration</p>
+                                <p class="text-lg font-semibold text-gray-800" th:text="${instance.startDateTime + ' to ' + instance.endDateTime}">Date and Time</p>
+                                <p class="text-sm text-gray-500 mt-1" th:text="'Duration: ' + ${T(java.time.Duration).between(instance.startDateTime, instance.endDateTime).toHours()} + ' hours'">Duration</p>
                             </div>
                             <div class="flex flex-col sm:flex-row items-start sm:items-center mt-4 sm:mt-0 sm:space-x-4">
                                 <span class="text-xl font-bold text-gray-800 mb-2 sm:mb-0" th:text="'$' + ${instance.price ?: experience.price}">$0</span>
