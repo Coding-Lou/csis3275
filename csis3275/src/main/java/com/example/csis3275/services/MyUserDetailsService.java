@@ -23,5 +23,3 @@ public class MyUserDetailsService implements UserDetailsService {
         return new CustomUserDetails(user);
     }
 }
-
-
