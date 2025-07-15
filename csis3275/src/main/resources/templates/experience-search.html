@@ -37,8 +37,9 @@
     </div>
 
     <div class="w-full max-w-6xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        <div th:each="experience : ${experiences}" 
-             class="bg-white rounded-xl shadow-md overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-lg">
+        <a th:each="experience : ${experiences}" 
+           th:href="@{/experience/detail/{id}(id=${experience.id})}"
+           class="bg-white rounded-xl shadow-md overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-lg cursor-pointer block">
             <img
                     th:src="@{'https://placehold.co/600x400/FF5A5F/FFFFFF?text=' + ${experience.title}}"
                     th:alt="${experience.title}"
@@ -54,7 +55,7 @@
                     <span class="text-sm text-gray-500" th:text="'Max: ' + ${experience.maxParticipants} + ' people'">Max participants</span>
                 </div>
             </div>
-        </div>
+        </a>
         
         <div th:if="${#lists.isEmpty(experiences)}" class="col-span-full text-center py-16">
             <div class="text-gray-500">
