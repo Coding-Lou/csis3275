@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>User Login</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 50px; }
+        .container { max-width: 400px; margin: 0 auto; }
+        input { width: 100%; padding: 10px; margin: 5px 0; }
+        button { background: #007bff; color: white; padding: 10px 20px; border: none; cursor: pointer; width: 100%; }
+        .error { color: red; margin-top: 10px; }
+        .register-link {
+            margin-top: 15px;
+            text-align: center;
+        }
+        .register-link a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Login</h2>
+    <form action="/user/login" method="post">
+        <input type="text" name="username" placeholder="Username" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <button type="submit">Login</button>
+    </form>
+
+    <div th:if="${param.error}" class="error">
+        <p>Invalid token or credentials</p>
+    </div>
+
+    <div th:if="${error}" class="error">
+        <p th:text="${error}"></p>
+    </div>
+
+    <div class="register-link">
+        <p>Don't have an account? <a th:href="@{/user/register}">Register here</a></p>
+    </div>
+
+    <p><small>Test users: sora/sora123, kairi/kairi456, riku/riku789</small></p>
+</div>
+</body>
+</html>
