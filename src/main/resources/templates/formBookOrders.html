@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="template1">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384- KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5Kk N" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384- ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384- JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.1.3/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384- JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <title>Add Book Order</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="col-md-6 offset-3">
+        <form method="post" th:action="@{saveBookOrder}" th:object="${bookOrder}">
+            <div>
+                <label>User ID</label>
+                <input class="form-control" type="text" name="user.id" th:value="*{user.id}" placeholder="User ID">
+                <span th:errors="*{user.id}" class="text-danger"></span>
+            </div>
+            <div>
+                <label>Experience Instance ID</label>
+                <input class="form-control" type="text" name="experienceInstance.id" th:value="*{experienceInstance.id}" placeholder="Experience Instance ID">
+                <span th:errors="*{experienceInstance.id}" class="text-danger"></span>
+            </div>
+            <div>
+                <label>Experience ID (Flat)</label>
+                <input class="form-control" type="text" name="experienceId" th:value="*{experienceId}" placeholder="Experience ID (Flat)">
+                <span th:errors="*{experienceId}" class="text-danger"></span>
+            </div>
+            <div>
+                <label>Guide ID</label>
+                <input class="form-control" type="text" name="guideId" th:value="*{guideId}" placeholder="Guide ID">
+                <span th:errors="*{guideId}" class="text-danger"></span>
+            </div>
+            <div>
+                <label>Booking Date Time</label>
+                <input class="form-control" type="datetime-local" name="bookingDateTime" th:value="${bookOrder.bookingDateTime != null ? #temporals.format(bookOrder.bookingDateTime, 'yyyy-MM-dd''T''HH:mm') : ''}">
+                <span th:errors="*{bookingDateTime}" class="text-danger"></span>
+            </div>
+            <div>
+                <label>Tour Start Date Time</label>
+                <input class="form-control" type="datetime-local" name="tourStartDateTime" th:value="${bookOrder.tourStartDateTime != null ? #temporals.format(bookOrder.tourStartDateTime, 'yyyy-MM-dd''T''HH:mm') : ''}">
+                <span th:errors="*{tourStartDateTime}" class="text-danger"></span>
+            </div>
+            <div>
+                <label>Order Status</label>
+                <select class="form-control" name="orderStatus" th:value="*{orderStatus}">
+                    <option th:each="status : ${T(com.example.csis3275.entities.OrderStatus).values()}"
+                            th:value="${status}"
+                            th:text="${status.name()}"
+                            th:selected="${status == bookOrder.orderStatus}"></option>
+                </select>
+                <span th:errors="*{orderStatus}" class="text-danger"></span>
+            </div>
+            <div>
+                <label>Transaction Value</label>
+                <input class="form-control" type="text" name="transactionValue" th:value="*{transactionValue}" placeholder="Transaction Value">
+                <span th:errors="*{transactionValue}" class="text-danger"></span>
+            </div>
+            <div>
+                <label>Payment Type</label>
+                <select class="form-control" name="paymentType" th:value="*{paymentType}">
+                    <option th:each="type : ${T(com.example.csis3275.entities.PaymentType).values()}"
+                            th:value="${type}"
+                            th:text="${type.name()}"
+                            th:selected="${type == bookOrder.paymentType}"></option>
+                </select>
+                <span th:errors="*{paymentType}" class="text-danger"></span>
+            </div>
+            <div>
+                <label>Payment ID</label>
+                <input class="form-control" type="text" name="paymentId" th:value="*{paymentId}" placeholder="Payment ID">
+                <span th:errors="*{paymentId}" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Save</button>
+        </form>
+    </div>
+</section>
+</body>
+</html>
