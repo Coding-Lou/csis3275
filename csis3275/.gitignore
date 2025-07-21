@@ -32,3 +32,12 @@ build/
 ### VS Code ###
 .vscode/
 
+# macOS system files
+.DS_Store
+
+# IntelliJ IDEA files
+.idea/
+*.iml
+
+# Build output directory
+target/

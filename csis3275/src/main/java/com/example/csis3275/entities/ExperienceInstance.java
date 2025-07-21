@@ -21,4 +21,6 @@ public class ExperienceInstance {
     private int availableSlots;
     private double price;
 
-}
+    private String title;
+    private String description;
+    private int guideId;}
