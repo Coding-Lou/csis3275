@@ -1,7 +1,9 @@
 package com.example.csis3275.controllers;
 
+import com.example.csis3275.entities.Experience;
 import com.example.csis3275.entities.User;
 import com.example.csis3275.entities.dto.UserDTO;
+import com.example.csis3275.repositories.ExperienceRepository;
 import com.example.csis3275.repositories.UserRepository;
 import com.example.csis3275.services.AuthenticationService;
 import com.example.csis3275.services.JwtService;
@@ -18,13 +20,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequestMapping("/user")
 @Controller
 @AllArgsConstructor
 public class UserController {
-
+    @Autowired
+    ExperienceRepository experienceRepository;
     @Autowired
     private UserRepository userRepository;
 
@@ -63,29 +67,46 @@ public class UserController {
 
             response.addCookie(cookie);
 
-            return "redirect:/user/" + authenticatedUser.getUsername();
+            if (loginUserDto.isTraveler())
+                return "redirect:/user/traveler/" + authenticatedUser.getUsername();
+
+            return "redirect:/user/guide/" + authenticatedUser.getUsername();
         } catch (Exception e) {
             model.addAttribute("error", "Invalid credentials");
             return "error";
         }
     }
 
-    @GetMapping("/{username}")
+    @GetMapping("/traveler/{username}")
+    public String getTravelerHome(HttpServletRequest request, @PathVariable String username, Model model) {
+
+        if(!isValidToken(request, username)) {
+            model.addAttribute("errorMessage", "User with username '" + username + "' not logged in");
+            return "error";
+        }
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        if (userOptional.isEmpty()) {
+            model.addAttribute("errorMessage", "User with username '" + username + "' was not found.");
+            return "error";
+        }
+        model.addAttribute("user", userOptional.get());
+        List<Experience> experiences = experienceRepository.findAll();
+        model.addAttribute("experiences", experiences);
+        return "travellerHome";
+    }
+
+    @GetMapping("/profile/{username}")
     public String getUserProfile(HttpServletRequest request, @PathVariable String username, Model model) {
 
         if(!isValidToken(request, username)) {
             model.addAttribute("errorMessage", "User with username '" + username + "' not logged in");
             return "error";
         }
-
         Optional<User> userOptional = userRepository.findByUsername(username);
-
-
         if (userOptional.isEmpty()) {
             model.addAttribute("errorMessage", "User with username '" + username + "' was not found.");
             return "error";
         }
-
         model.addAttribute("user", userOptional.get());
         return "profile";
     }
@@ -182,7 +203,7 @@ public class UserController {
         cookie.setSecure(false);
 
         response.addCookie(cookie);
-        return "redirect:/user/login";
+        return "redirect:/";
     }
 
     private boolean isValidToken(HttpServletRequest request, String username) {
