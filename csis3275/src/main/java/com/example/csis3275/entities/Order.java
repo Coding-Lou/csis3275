@@ -26,15 +26,16 @@ public class Order {
     @JoinColumn(name = "experience_instance_id")
     private ExperienceInstance experienceInstance;
     private Long experienceId;
-    private Long guideId;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDateTime bookingDateTime;
-    private LocalDateTime tourStartDateTime;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "order_status")
     private OrderStatus orderStatus;
+    private int quantity;
     private double transactionValue;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "payment_type")
     private PaymentType paymentType;
     private Long paymentId;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private String createdAt;
+    private String updatedAt;
 }

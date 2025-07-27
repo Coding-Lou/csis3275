@@ -1,103 +1,84 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Home - Travel App</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Home - Travel App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
-    <!-- Custom styles -->
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f7f7f7;
-        }
-        :root {
-            --primary-color: #007bff;;
-        }
-        .btn-primary {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-        }
-        .btn-primary:hover {
-            background-color: #007bff;;
-            border-color: #007bff;;
-        }
-        .card-title, .section-title {
-            color: #333;
-        }
-    </style>
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Custom styles -->
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f7f7f7;
+    }
+    :root {
+      --primary-color: #007bff;;
+    }
+    .btn-primary {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+    .btn-primary:hover {
+      background-color: #007bff;;
+      border-color: #007bff;;
+    }
+    .card-title, .section-title {
+      color: #333;
+    }
+  </style>
 </head>
-<body>
 
-<!-- Search Bar -->
-<div class="container mb-5">
-    <form action="/experience/search" method="post" class="input-group input-group-lg shadow-sm">
-        <input
-                type="text"
-                name="search"
-                class="form-control"
-                placeholder="Search destinations, activities, and more..."
-                th:value="${param.search}">
-        <div class="input-group-append">
-            <button class="btn btn-primary" type="submit">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" viewBox="0 0 24 24">
-                    <path d="M10 2a8 8 0 015.29 13.71l4.3 4.3a1 1 0 01-1.42 1.42l-4.3-4.3A8 8 0 1110 2zm0 2a6 6 0 100 12 6 6 0 000-12z"/>
-                </svg>
-                <span class="ml-2">Search</span>
-            </button>
-        </div>
-    </form>
-</div>
-
-<!-- Experiences Section -->
 <div class="container">
-    <h2 class="section-title mb-4">Experiences Found</h2>
-    <div class="row">
+  <h2 class="section-title mb-4">Experiences Found</h2>
+  <div class="row">
 
-        <!-- Experience Card -->
-        <div class="col-md-4 mb-4" th:each="experience : ${experiences}">
-            <a th:href="@{/experience/detail/{id}(id=${experience.id})}" class="text-decoration-none text-dark">
-                <div class="card h-100 shadow-sm">
-                    <img
-                            class="card-img-top"
-                            th:src="@{'/img/' + ${experience.id} + '.jpg' }"
-                            th:alt="${experience.title}"
-                            onerror="this.onerror=null;this.src='https://placehold.co/600x400/007bff/FFFFFF?text=Experience';">
-                    <div class="card-body">
-                        <h5 class="card-title" th:text="${experience.title}">Experience Title</h5>
-                        <p class="card-text text-muted mb-1" th:text="${experience.city + ', ' + experience.country}">Location</p>
-                        <p class="card-text" th:text="${experience.shortDescription}">Short description</p>
-                    </div>
-                    <div class="card-footer d-flex justify-content-between">
-                        <span class="font-weight-bold text-dark" th:text="'$' + ${experience.price} + ' / person'">$0 / person</span>
-                        <span class="text-muted" th:text="'Max: ' + ${experience.maxParticipants} + ' people'">Max participants</span>
-                    </div>
-                </div>
-            </a>
+    <!-- Experience Card -->
+    <div class="col-md-4 mb-4" th:each="experience : ${experiences}">
+      <a th:href="@{/experience/detail/{id}(id=${experience.id})}" class="text-decoration-none text-dark">
+        <div class="card h-100 shadow-sm">
+          <img
+                  class="card-img-top img-fluid"
+                  th:src="@{'/img/' + ${experience.id} + '.jpg' }"
+                  th:alt="${experience.title}"
+                  style="height: 200px; object-fit: cover;"
+                  onerror="this.onerror=null;this.src='https://placehold.co/600x400/007bff/FFFFFF?text=Experience';">
+          <div class="card-body">
+            <h5 class="card-title" th:text="${experience.title}">Experience Title</h5>
+            <p class="card-text text-muted mb-1" th:text="${experience.city + ', ' + experience.country}">Location</p>
+            <p class="card-text" th:text="${experience.shortDescription}">Short description</p>
+          </div>
+          <div class="card-footer d-flex justify-content-between">
+            <span class="font-weight-bold text-dark" th:text="'$' + ${experience.price} + ' / person'">$0 / person</span>
+            <span class="text-muted" th:text="'Max: ' + ${experience.maxParticipants} + ' people'">Max participants</span>
+          </div>
         </div>
-
-        <!-- No Experiences Fallback -->
-        <div class="col-12 text-center py-5" th:if="${#lists.isEmpty(experiences)}">
-            <div class="text-muted">
-                <svg class="mb-3" width="48" height="48" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                <h4>No experiences found</h4>
-                <p>There are no experiences available at the moment.</p>
-            </div>
-        </div>
+      </a>
     </div>
+
+    <!-- No Experiences Fallback -->
+    <div class="col-12 text-center py-5" th:if="${#lists.isEmpty(experiences)}">
+      <div class="text-muted">
+        <svg class="mb-3" width="48" height="48" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        <h4>No experiences found</h4>
+        <p>There are no experiences available at the moment.</p>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- Bootstrap JS (optional, for interactions) -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 
 </body>
 </html>

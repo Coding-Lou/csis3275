@@ -1,9 +1,11 @@
 package com.example.csis3275.controllers;
 
 import com.example.csis3275.entities.Experience;
+import com.example.csis3275.entities.Order;
 import com.example.csis3275.entities.User;
 import com.example.csis3275.entities.dto.UserDTO;
 import com.example.csis3275.repositories.ExperienceRepository;
+import com.example.csis3275.repositories.OrderRepository;
 import com.example.csis3275.repositories.UserRepository;
 import com.example.csis3275.services.AuthenticationService;
 import com.example.csis3275.services.JwtService;
@@ -31,6 +33,8 @@ public class UserController {
     ExperienceRepository experienceRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private OrderRepository orderRepository;
 
     @Autowired
     private UserService userService;
@@ -80,16 +84,23 @@ public class UserController {
     @GetMapping("/traveler/{username}")
     public String getTravelerHome(HttpServletRequest request, @PathVariable String username, Model model) {
 
-        if(!isValidToken(request, username)) {
+        if(!checkValidToken(request, username)) {
             model.addAttribute("errorMessage", "User with username '" + username + "' not logged in");
             return "error";
         }
+
         Optional<User> userOptional = userRepository.findByUsername(username);
         if (userOptional.isEmpty()) {
             model.addAttribute("errorMessage", "User with username '" + username + "' was not found.");
             return "error";
         }
-        model.addAttribute("user", userOptional.get());
+        User user = userOptional.get();
+        model.addAttribute("user", user);
+
+        List<Order> orders = orderRepository.findOrdersByUserId(user.getId());
+
+        model.addAttribute("orders", orders);
+
         List<Experience> experiences = experienceRepository.findAll();
         model.addAttribute("experiences", experiences);
         return "travellerHome";
@@ -98,7 +109,7 @@ public class UserController {
     @GetMapping("/profile/{username}")
     public String getUserProfile(HttpServletRequest request, @PathVariable String username, Model model) {
 
-        if(!isValidToken(request, username)) {
+        if(!checkValidToken(request, username)) {
             model.addAttribute("errorMessage", "User with username '" + username + "' not logged in");
             return "error";
         }
@@ -110,7 +121,6 @@ public class UserController {
         model.addAttribute("user", userOptional.get());
         return "profile";
     }
-
 
     @GetMapping("/register")
     public String showRegisterForm(Model model) {
@@ -138,7 +148,7 @@ public class UserController {
     @PostMapping("/delete")
     public String deleteUser(HttpServletRequest request, Model model, @RequestParam(name = "username", defaultValue = "") String username) {
 
-        if(!isValidToken(request, username)) {
+        if(!checkValidToken(request, username)) {
             model.addAttribute("errorMessage", "User not logged in.");
             return "error";
         }
@@ -152,7 +162,7 @@ public class UserController {
     @GetMapping("/update/{username}")
     public String showUpdateForm(HttpServletRequest request, @PathVariable String username, Model model) {
 
-        if(!isValidToken(request, username)) {
+        if(!checkValidToken(request, username)) {
             model.addAttribute("errorMessage", "User with username '" + username + "' not logged in.");
             return "error";
         }
@@ -171,7 +181,7 @@ public class UserController {
     @PostMapping("/update")
     public String updateUser(HttpServletRequest request, @ModelAttribute User updatedUser, Model model) {
 
-        if(!isValidToken(request, updatedUser.getUsername())) {
+        if(!checkValidToken(request, updatedUser.getUsername())) {
             model.addAttribute("errorMessage", "User with username '" + updatedUser.getUsername() + "' not logged in.");
             return "error";
         }
@@ -206,7 +216,7 @@ public class UserController {
         return "redirect:/";
     }
 
-    private boolean isValidToken(HttpServletRequest request, String username) {
+    private boolean checkValidToken(HttpServletRequest request, String username) {
         String token = "";
         for (Cookie cookie : request.getCookies()) {
             if (("user-token-" + username).equals(cookie.getName())) {
