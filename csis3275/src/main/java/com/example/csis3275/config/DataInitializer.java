@@ -35,9 +35,12 @@ public class DataInitializer {
 
     @PostConstruct
     public void initData() {
+        if (userRepository.count() == 0) {
+            createInitialUsers();
+        }
+
         if (experienceRepository.count() == 0) {
             createInitialExperiences();
-            createInitialUsers();
         }
     }
 

@@ -13,6 +13,7 @@ import com.example.csis3275.services.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +54,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String login(@ModelAttribute UserDTO loginUserDto, Model model, HttpServletResponse response) {
+    public String login(@ModelAttribute UserDTO loginUserDto, Model model, HttpServletResponse response, HttpSession session) {
         try {
             User authenticatedUser = authenticationService.authenticate(loginUserDto);
 
@@ -71,10 +72,19 @@ public class UserController {
 
             response.addCookie(cookie);
 
-            if (loginUserDto.isTraveler())
+            if (loginUserDto.getSessionRole().equals("traveler")) {
+                session.setAttribute("sessionRole", "traveler");
                 return "redirect:/user/traveler/" + authenticatedUser.getUsername();
+            }
 
-            return "redirect:/user/guide/" + authenticatedUser.getUsername();
+
+            if(loginUserDto.getSessionRole().equals("guide")) {
+                session.setAttribute("sessionRole", "guide");
+                return "redirect:/user/guide/" + authenticatedUser.getUsername();
+            }
+
+
+            return "error";
         } catch (Exception e) {
             model.addAttribute("error", "Invalid credentials");
             return "error";
@@ -205,12 +215,14 @@ public class UserController {
     }
 
     @GetMapping("/logout/{username}")
-    public String logoutUser(@PathVariable String username, HttpServletResponse response) {
+    public String logoutUser(@PathVariable String username, HttpServletResponse response, HttpSession session) {
         Cookie cookie = new Cookie("user-token-" + username, null);
         cookie.setPath("/");
         cookie.setMaxAge(0);
         cookie.setHttpOnly(true);
         cookie.setSecure(false);
+
+        session.removeAttribute("sessionRole");
 
         response.addCookie(cookie);
         return "redirect:/";
