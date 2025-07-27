@@ -18,6 +18,7 @@ public class Experience {
     private String city;
     private String location;
     private int maxParticipants;
+    private int duration;
     private double price;
     @OneToMany(mappedBy = "experience")
     private List<ExperienceInstance> instances;
