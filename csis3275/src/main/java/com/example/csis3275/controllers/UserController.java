@@ -54,7 +54,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String login(@ModelAttribute UserDTO loginUserDto, Model model, HttpServletResponse response, HttpSession session) {
+    public String login(@ModelAttribute UserDTO loginUserDto, Model model, HttpServletResponse response, HttpSession session, HttpServletRequest request) {
         try {
             User authenticatedUser = authenticationService.authenticate(loginUserDto);
 
@@ -63,6 +63,8 @@ public class UserController {
                     authenticatedUser.getPasswordHash(),
                     java.util.Collections.emptyList()
             ));
+
+            deleteAllPreviousCookies(request, response);
 
             Cookie cookie = new Cookie("user-token-" + authenticatedUser.getUsername(), jwtToken);
 
@@ -226,6 +228,22 @@ public class UserController {
 
         response.addCookie(cookie);
         return "redirect:/";
+    }
+
+    private void deleteAllPreviousCookies(HttpServletRequest request, HttpServletResponse response) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().startsWith("user-token")) {
+                    Cookie deleteCookie = new Cookie(cookie.getName(), "");
+                    deleteCookie.setPath("/");
+                    deleteCookie.setMaxAge(0);
+                    deleteCookie.setHttpOnly(true);
+                    deleteCookie.setSecure(false);
+                    response.addCookie(deleteCookie);
+                }
+            }
+        }
     }
 
     private boolean checkValidToken(HttpServletRequest request, String username) {

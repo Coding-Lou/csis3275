@@ -6,6 +6,7 @@ import com.example.csis3275.repositories.ExperienceRepository;
 import com.example.csis3275.repositories.OrderRepository;
 import com.example.csis3275.repositories.UserRepository;
 import com.example.csis3275.services.JwtService;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -56,8 +57,13 @@ public class ExperienceController {
         String token = "";
         String username = "";
         try {
-            token = request.getCookies()[0].getValue();
+            for (Cookie cookie : request.getCookies()) {
+                if (cookie.getName().startsWith("user-token")) {
+                    token = cookie.getValue();
+                }
+            }
             username = jwtService.extractUsername(token);
+
         } catch (Exception e) {
             model.addAttribute("errorMessage", "User not logged in");
             return "login";
