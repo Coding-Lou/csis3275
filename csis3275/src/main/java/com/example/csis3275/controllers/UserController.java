@@ -93,6 +93,37 @@ public class UserController {
         }
     }
 
+    @GetMapping("/guide/{username}")
+    public String getGuideHome(HttpServletRequest request, @PathVariable String username, Model model) {
+        if(!checkValidToken(request, username)) {
+            model.addAttribute("errorMessage", "User with username '" + username + "' not logged in");
+            return "error";
+        }
+
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        if (userOptional.isEmpty()) {
+            model.addAttribute("errorMessage", "User with username '" + username + "' was not found.");
+            return "error";
+        }
+
+        User user = userOptional.get();
+
+        if(!userOptional.get().isGuide()) {
+            model.addAttribute("errorMessage", "User is not a guide.");
+            return "error";
+        }
+
+        model.addAttribute("user", user);
+
+        List<Order> orders = orderRepository.findOrdersByUserId(user.getId());
+
+        model.addAttribute("orders", orders);
+
+        List<Experience> experiences = experienceRepository.findAll();
+        model.addAttribute("experiences", experiences);
+        return "GuideHome";
+    }
+
     @GetMapping("/traveler/{username}")
     public String getTravelerHome(HttpServletRequest request, @PathVariable String username, Model model) {
 
