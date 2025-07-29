@@ -11,7 +11,7 @@
     <div class="d-flex justify-content-between align-items-center">
         <h2>User Profile</h2>
         <div>
-            <a th:href="@{'/user/'  + ${session.sessionRole} + '/' + ${user.username}}" class="btn btn-secondary btn-sm">Home</a>
+            <a href="/" class="btn btn-secondary btn-sm">Home</a>
             <a th:href="@{'/user/logout/' + ${user.username}}" class="btn btn-danger btn-sm ml-2">Logout</a>
         </div>
     </div>

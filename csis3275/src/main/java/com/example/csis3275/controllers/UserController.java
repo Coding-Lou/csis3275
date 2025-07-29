@@ -75,13 +75,23 @@ public class UserController {
             response.addCookie(cookie);
 
             if (loginUserDto.getSessionRole().equals("traveler")) {
-                session.setAttribute("sessionRole", "traveler");
+                Cookie roleCookie = new Cookie("user-role-" + authenticatedUser.getUsername(), "traveler");
+                roleCookie.setHttpOnly(true);
+                roleCookie.setSecure(false);
+                roleCookie.setPath("/");
+                roleCookie.setMaxAge(24 * 60 * 60); // 24 hours, same as JWT token
+                response.addCookie(roleCookie);
                 return "redirect:/user/traveler/" + authenticatedUser.getUsername();
             }
 
 
             if(loginUserDto.getSessionRole().equals("guide")) {
-                session.setAttribute("sessionRole", "guide");
+                Cookie roleCookie = new Cookie("user-role-" + authenticatedUser.getUsername(), "guide");
+                roleCookie.setHttpOnly(true);
+                roleCookie.setSecure(false);
+                roleCookie.setPath("/");
+                roleCookie.setMaxAge(24 * 60 * 60); // 24 hours, same as JWT token
+                response.addCookie(roleCookie);
                 return "redirect:/user/guide/" + authenticatedUser.getUsername();
             }
 
@@ -218,16 +228,8 @@ public class UserController {
     }
 
     @GetMapping("/logout/{username}")
-    public String logoutUser(@PathVariable String username, HttpServletResponse response, HttpSession session) {
-        Cookie cookie = new Cookie("user-token-" + username, null);
-        cookie.setPath("/");
-        cookie.setMaxAge(0);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(false);
-
-        session.removeAttribute("sessionRole");
-
-        response.addCookie(cookie);
+    public String logoutUser(@PathVariable String username, HttpServletResponse response, HttpSession session, HttpServletRequest request) {
+        deleteAllPreviousCookies(request, response);
         return "redirect:/";
     }
 
@@ -236,6 +238,15 @@ public class UserController {
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().startsWith("user-token")) {
+                    Cookie deleteCookie = new Cookie(cookie.getName(), "");
+                    deleteCookie.setPath("/");
+                    deleteCookie.setMaxAge(0);
+                    deleteCookie.setHttpOnly(true);
+                    deleteCookie.setSecure(false);
+                    response.addCookie(deleteCookie);
+                }
+
+                if( cookie.getName().startsWith("user-role")) {
                     Cookie deleteCookie = new Cookie(cookie.getName(), "");
                     deleteCookie.setPath("/");
                     deleteCookie.setMaxAge(0);
