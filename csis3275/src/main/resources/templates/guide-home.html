@@ -70,9 +70,9 @@
 <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="section-title mb-0"><i class="bi bi-star me-2"></i>My Created Experiences</h2>
-        <button class="btn btn-primary">
+        <a th:href="@{'/user/guide/' + ${user.username} + '/create-experience'}" class="btn btn-primary">
             <i class="bi bi-plus-circle me-2"></i>Create New Experience
-        </button>
+        </a>
     </div>
 
     <!-- No Experiences Message -->
@@ -81,9 +81,9 @@
             <i class="bi bi-journal-plus" style="font-size: 3rem;"></i>
             <h4 class="mt-3">No experiences created yet</h4>
             <p>Start creating amazing experiences for travelers!</p>
-            <button class="btn btn-primary mt-3">
+            <a class="btn btn-primary mt-3" th:href="@{'/user/guide/' + ${user.username} + '/create-experience'}">
                 <i class="bi bi-plus-circle me-2"></i>Create Your First Experience
-            </button>
+            </a>
         </div>
     </div>
 
@@ -120,8 +120,8 @@
                         <span class="badge bg-success me-1" th:text="${#lists.size(experience.instances)} + ' scheduled'">3 scheduled</span>
                         <br>
                         <small class="text-muted">
-                            Available slots: 
-                            <span th:text="${experience.instances.stream().mapToInt(inst -> inst.availableSlots).sum()}">30</span>
+                            Available slots:
+                            <span th:text="${experience.getMaxParticipants()}"></span>
                         </small>
                     </div>
                     <div th:if="${experience.instances == null or #lists.isEmpty(experience.instances)}">
@@ -129,15 +129,12 @@
                     </div>
                 </td>
                 <td class="text-center">
-                    <button class="btn btn-outline-primary btn-sm me-1">
+                    <a th:href="@{/experience/detail/{id}(id=${experience.id})}" class="btn btn-outline-primary btn-sm me-1">
                         <i class="bi bi-eye"></i> View
-                    </button>
-                    <button class="btn btn-outline-secondary btn-sm me-1">
+                    </a>
+                    <a th:href="@{/user/guide/{username}/{experienceId}/update-experience(username=${user.username}, experienceId=${experience.id})}" class="btn btn-outline-secondary btn-sm me-1">
                         <i class="bi bi-pencil"></i> Edit
-                    </button>
-                    <button class="btn btn-outline-success btn-sm">
-                        <i class="bi bi-calendar-plus"></i> Add Instance
-                    </button>
+                    </a>
                 </td>
             </tr>
             </tbody>
