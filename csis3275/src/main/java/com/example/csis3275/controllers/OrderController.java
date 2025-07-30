@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-@RequestMapping("/orders/{username}")
+@RequestMapping("/orders")
 @Controller
 @AllArgsConstructor
 public class OrderController {
@@ -34,7 +34,7 @@ public class OrderController {
     @Autowired
     private JwtService jwtService;
 
-    @GetMapping("")
+    @GetMapping("/{username}")
     public String getOrders(HttpServletRequest request, @PathVariable String username, Model model) {
         if(!checkValidToken(request, username)) {
             model.addAttribute("errorMessage", "User with username '" + username + "' not logged in");
@@ -53,7 +53,7 @@ public class OrderController {
         return "redirect:/user/traveler/" + username;
     }
 
-    @PostMapping("/cancel")
+    @PostMapping("/{username}/cancel")
     public String cancelOrder(HttpServletRequest request,  Model model, @PathVariable String username, @RequestParam Long orderId) {
 
         if(!checkValidToken(request, username)) {
@@ -69,9 +69,10 @@ public class OrderController {
         }
 
         Order order = optionalOrder.get();
+        User user =  getCurrentUser(request,username);
         if (order.getOrderStatus() == OrderStatus.CANCELLED) {
             model.addAttribute("errorMessage", "Order is already cancelled.");
-            return "redirect:/user/traveler/" + order.getUser().getUsername();
+            return "redirect:/user/traveler/" + user.getUsername();
         }
 
         order.setOrderStatus(OrderStatus.CANCELLED);
@@ -87,7 +88,7 @@ public class OrderController {
         return "redirect:/user/traveler/" + order.getUser().getUsername();
     }
 
-    @GetMapping("/details")
+    @GetMapping("/{username}/details")
     public String details(HttpServletRequest request, @PathVariable String username, @RequestParam("orderId") Long orderId, Model model) {
 
         if(!checkValidToken(request, username)) {
@@ -103,14 +104,15 @@ public class OrderController {
         }
 
         Order order = optionalOrder.get();
-        model.addAttribute("user", order.getUser());
+
+        model.addAttribute("user", getCurrentUser(request,username));
         model.addAttribute("experienceInstance", order.getExperienceInstance());
         model.addAttribute("order", order);
 
         return "order-details";
     }
 
-    @PostMapping("/pay")
+    @PostMapping("/{username}/pay")
     public String pay(HttpServletRequest request, @PathVariable String username, @RequestParam Long orderId, @RequestParam String paymentType, Model model) {
 
         if(!checkValidToken(request, username)) {
@@ -141,16 +143,35 @@ public class OrderController {
             if (("user-token-" + username).equals(cookie.getName())) {
                 token = cookie.getValue();
             }
+            if (cookie.getName().equals("user-role-admin"))
+                return true;
         }
 
         if(token.isEmpty()) return false;
 
         try {
+            User user = userRepository.getUserByUsername(username);
+            if (user.isAdmin()) return true;
             jwtService.extractUsername(token);
             return true;
         } catch (Exception e) {
             return false;
         }
+    }
+
+    private User getCurrentUser(HttpServletRequest request, String username) {
+        String token = "";
+        for (Cookie cookie : request.getCookies()) {
+            if (cookie.getName().startsWith("user-token-")) {
+                token = cookie.getValue();
+            }
+        }
+        try {
+            return userRepository.getUserByUsername(jwtService.extractUsername(token));
+        } catch (Exception e) {
+            return null;
+        }
+
     }
 
 }

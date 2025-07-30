@@ -20,9 +20,7 @@ public class User {
     private String lastName;
     private String phone;
     private String country;
-    private boolean admin;
-    private boolean traveler;
-    private boolean guide;
+    private boolean isAdmin = false;
 
     @PrePersist
     public void prePersist() {

@@ -15,8 +15,7 @@ public class UserDTO {
     private String country;
     @Transient
     private String sessionRole;
-    private boolean traveler;
-    private boolean guide;
+
 
     public User toUser() {
         User user = new User();
@@ -27,9 +26,6 @@ public class UserDTO {
         user.setLastName(lastName);
         user.setPhone(phone);
         user.setCountry(country);
-        user.setAdmin(false);
-        user.setTraveler(traveler);
-        user.setGuide(guide);
         return user;
     }
 }

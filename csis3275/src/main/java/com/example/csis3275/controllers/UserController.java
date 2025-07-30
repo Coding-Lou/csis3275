@@ -36,14 +36,11 @@ public class UserController {
     private UserRepository userRepository;
     @Autowired
     private OrderRepository orderRepository;
-
     @Autowired
     private UserService userService;
-
     @Autowired
     private JwtService jwtService;
 
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
     private AuthenticationService authenticationService;
@@ -74,28 +71,35 @@ public class UserController {
 
             response.addCookie(cookie);
 
-            if (loginUserDto.getSessionRole().equals("traveler")) {
-                Cookie roleCookie = new Cookie("user-role-" + authenticatedUser.getUsername(), "traveler");
+            Optional<User> optionalUser = userRepository.findByUsername(authenticatedUser.getUsername());
+
+            if (optionalUser.isPresent()) {
+                User user =  optionalUser.get();
+                Cookie roleCookie = new Cookie("user-role-" + authenticatedUser.getUsername(), loginUserDto.getSessionRole());
                 roleCookie.setHttpOnly(true);
                 roleCookie.setSecure(false);
                 roleCookie.setPath("/");
                 roleCookie.setMaxAge(24 * 60 * 60); // 24 hours, same as JWT token
                 response.addCookie(roleCookie);
-                return "redirect:/user/traveler/" + authenticatedUser.getUsername();
+
+                if (loginUserDto.getSessionRole().equals("admin")) {
+                    if (user.isAdmin())
+                        return "redirect:/admin";
+                    else {
+                        model.addAttribute("errorMessage", "User doesn't have admin role");
+                        return "error";
+                    }
+                }
+
+                if (loginUserDto.getSessionRole().equals("traveler"))
+                    return "redirect:/user/traveler/" + authenticatedUser.getUsername();
+
+                if (loginUserDto.getSessionRole().equals("guide"))
+                    return "redirect:/user/guide/" + authenticatedUser.getUsername();
+
             }
 
-
-            if(loginUserDto.getSessionRole().equals("guide")) {
-                Cookie roleCookie = new Cookie("user-role-" + authenticatedUser.getUsername(), "guide");
-                roleCookie.setHttpOnly(true);
-                roleCookie.setSecure(false);
-                roleCookie.setPath("/");
-                roleCookie.setMaxAge(24 * 60 * 60); // 24 hours, same as JWT token
-                response.addCookie(roleCookie);
-                return "redirect:/user/guide/" + authenticatedUser.getUsername();
-            }
-
-
+            model.addAttribute("error", "Error in login");
             return "error";
         } catch (Exception e) {
             model.addAttribute("error", "Invalid credentials");
@@ -264,6 +268,8 @@ public class UserController {
             if (("user-token-" + username).equals(cookie.getName())) {
                 token = cookie.getValue();
             }
+            if (cookie.getName().equals("user-role-admin"))
+                return true;
         }
 
         if(token.isEmpty()) return false;

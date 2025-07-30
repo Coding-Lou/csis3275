@@ -12,10 +12,12 @@ import java.util.List;
 
 @Repository
 public interface ExperienceRepository extends JpaRepository<Experience, Long> {
-    List<Experience> findByTitleContainingIgnoreCase(String title);
+
+    @Query("SELECT e FROM Experience e WHERE LOWER(e.title) LIKE LOWER(CONCAT('%', :title, '%')) and e.active = true")
+    List<Experience> findByTitleContainingIgnoreCase(@Param("title") String title);
 
     List<Experience> findByUserId(Long userId);
 
-    @Query("SELECT e FROM Experience e LEFT JOIN FETCH e.instances WHERE e.user.id = :userId")
+    @Query("SELECT e FROM Experience e LEFT JOIN FETCH e.instances WHERE e.user.id = :userId and e.active = true")
     List<Experience> findByUserIdWithInstances(@Param("userId") Long userId);
 }
