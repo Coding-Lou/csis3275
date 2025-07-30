@@ -14,4 +14,8 @@ import java.util.List;
 public interface ExperienceRepository extends JpaRepository<Experience, Long> {
     List<Experience> findByTitleContainingIgnoreCase(String title);
 
+    List<Experience> findByUserId(Long userId);
+
+    @Query("SELECT e FROM Experience e LEFT JOIN FETCH e.instances WHERE e.user.id = :userId")
+    List<Experience> findByUserIdWithInstances(@Param("userId") Long userId);
 }

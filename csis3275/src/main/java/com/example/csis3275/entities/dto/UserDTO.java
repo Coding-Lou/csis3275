@@ -1,6 +1,7 @@
 package com.example.csis3275.entities.dto;
 
 import com.example.csis3275.entities.User;
+import jakarta.persistence.Transient;
 import lombok.Data;
 
 @Data
@@ -12,6 +13,8 @@ public class UserDTO {
     private String lastName;
     private String phone;
     private String country;
+    @Transient
+    private String sessionRole;
     private boolean traveler;
     private boolean guide;
 

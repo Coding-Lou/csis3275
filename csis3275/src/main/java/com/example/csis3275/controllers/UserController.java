@@ -13,6 +13,7 @@ import com.example.csis3275.services.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +54,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String login(@ModelAttribute UserDTO loginUserDto, Model model, HttpServletResponse response) {
+    public String login(@ModelAttribute UserDTO loginUserDto, Model model, HttpServletResponse response, HttpSession session, HttpServletRequest request) {
         try {
             User authenticatedUser = authenticationService.authenticate(loginUserDto);
 
@@ -63,6 +64,8 @@ public class UserController {
                     java.util.Collections.emptyList()
             ));
 
+            deleteAllPreviousCookies(request, response);
+
             Cookie cookie = new Cookie("user-token-" + authenticatedUser.getUsername(), jwtToken);
 
             cookie.setHttpOnly(true); 
@@ -71,15 +74,35 @@ public class UserController {
 
             response.addCookie(cookie);
 
-            if (loginUserDto.isTraveler())
+            if (loginUserDto.getSessionRole().equals("traveler")) {
+                Cookie roleCookie = new Cookie("user-role-" + authenticatedUser.getUsername(), "traveler");
+                roleCookie.setHttpOnly(true);
+                roleCookie.setSecure(false);
+                roleCookie.setPath("/");
+                roleCookie.setMaxAge(24 * 60 * 60); // 24 hours, same as JWT token
+                response.addCookie(roleCookie);
                 return "redirect:/user/traveler/" + authenticatedUser.getUsername();
+            }
 
-            return "redirect:/user/guide/" + authenticatedUser.getUsername();
+
+            if(loginUserDto.getSessionRole().equals("guide")) {
+                Cookie roleCookie = new Cookie("user-role-" + authenticatedUser.getUsername(), "guide");
+                roleCookie.setHttpOnly(true);
+                roleCookie.setSecure(false);
+                roleCookie.setPath("/");
+                roleCookie.setMaxAge(24 * 60 * 60); // 24 hours, same as JWT token
+                response.addCookie(roleCookie);
+                return "redirect:/user/guide/" + authenticatedUser.getUsername();
+            }
+
+
+            return "error";
         } catch (Exception e) {
             model.addAttribute("error", "Invalid credentials");
             return "error";
         }
     }
+
 
     @GetMapping("/traveler/{username}")
     public String getTravelerHome(HttpServletRequest request, @PathVariable String username, Model model) {
@@ -205,15 +228,34 @@ public class UserController {
     }
 
     @GetMapping("/logout/{username}")
-    public String logoutUser(@PathVariable String username, HttpServletResponse response) {
-        Cookie cookie = new Cookie("user-token-" + username, null);
-        cookie.setPath("/");
-        cookie.setMaxAge(0);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(false);
-
-        response.addCookie(cookie);
+    public String logoutUser(@PathVariable String username, HttpServletResponse response, HttpSession session, HttpServletRequest request) {
+        deleteAllPreviousCookies(request, response);
         return "redirect:/";
+    }
+
+    private void deleteAllPreviousCookies(HttpServletRequest request, HttpServletResponse response) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().startsWith("user-token")) {
+                    Cookie deleteCookie = new Cookie(cookie.getName(), "");
+                    deleteCookie.setPath("/");
+                    deleteCookie.setMaxAge(0);
+                    deleteCookie.setHttpOnly(true);
+                    deleteCookie.setSecure(false);
+                    response.addCookie(deleteCookie);
+                }
+
+                if( cookie.getName().startsWith("user-role")) {
+                    Cookie deleteCookie = new Cookie(cookie.getName(), "");
+                    deleteCookie.setPath("/");
+                    deleteCookie.setMaxAge(0);
+                    deleteCookie.setHttpOnly(true);
+                    deleteCookie.setSecure(false);
+                    response.addCookie(deleteCookie);
+                }
+            }
+        }
     }
 
     private boolean checkValidToken(HttpServletRequest request, String username) {
