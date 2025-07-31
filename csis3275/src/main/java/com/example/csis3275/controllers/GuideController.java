@@ -5,6 +5,7 @@ import com.example.csis3275.entities.Experience;
 import com.example.csis3275.entities.ExperienceInstance;
 import com.example.csis3275.entities.Order;
 import com.example.csis3275.entities.User;
+import com.example.csis3275.helpers.DateTimeHelper;
 import com.example.csis3275.repositories.ExperienceRepository;
 import com.example.csis3275.repositories.OrderRepository;
 import com.example.csis3275.repositories.UserRepository;
@@ -18,6 +19,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -103,8 +107,13 @@ public class GuideController {
             experience.setUser(user);
         }
 
+
         List<ExperienceInstance> experienceInstances = experience.getInstances();
         for(ExperienceInstance experienceInstance : experienceInstances) {
+            String startDateTime = DateTimeHelper.formatDateTime(experienceInstance.getStartDateTime());
+            String endDateTime = DateTimeHelper.formatDateTime(experienceInstance.getEndDateTime());
+            experienceInstance.setStartDateTime(startDateTime);
+            experienceInstance.setEndDateTime(endDateTime);
             experienceInstance.setExperience(experience);
         }
 
@@ -167,6 +176,11 @@ public class GuideController {
             existingExperience.getInstances().clear();
 
             for (ExperienceInstance instance : experience.getInstances()) {
+                String startDateTime = DateTimeHelper.formatDateTime(instance.getStartDateTime());
+                String endDateTime = DateTimeHelper.formatDateTime(instance.getEndDateTime());
+                instance.setStartDateTime(startDateTime);
+                instance.setEndDateTime(endDateTime);
+                instance.setExperience(experience);
                 instance.setExperience(existingExperience);
                 if (instance.getPrice() == 0.0) {
                     instance.setPrice(existingExperience.getPrice());
