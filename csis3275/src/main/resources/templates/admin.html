@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Portal - Travel App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f7f7;
+        }
+        :root {
+            --primary-color: #007bff;;
+        }
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        .btn-primary:hover {
+            background-color: #007bff;;
+            border-color: #007bff;;
+        }
+        .card-title, .section-title {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Welcome Section -->
+<div class="d-flex justify-content-between align-items-center p-3 bg-white shadow-sm mb-4">
+    <h1 class="h4 font-weight-bold mb-0">Admin Portal</h1>
+
+    <div class="dropdown">
+        <a class="btn btn-light border rounded-pill px-3 dropdown-toggle d-flex align-items-center" href="#"
+           role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <span th:text="admin">Username</span>
+        </a>
+
+        <ul class="dropdown-menu dropdown-menu-end shadow rounded" aria-labelledby="userDropdown">
+            <li>
+                <a class="dropdown-item d-flex align-items-center" th:href="@{'/user/profile/admin'}">
+                    <i class="bi bi-person me-2"></i> Profile
+                </a>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+                <a class="dropdown-item d-flex align-items-center text-danger" th:href="@{'/user/logout/admin'} ">
+                    <i class="bi bi-box-arrow-right me-2"></i> Logout
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<hr>
+
+<!-- User Section -->
+<div class="container users-card">
+    <h2 class="section-title mb-4">User Management</h2>
+
+    <div class="">
+        <!-- User Managements -->
+        <form class="row mb-4" method="get" th:action="@{/admin}">
+            <div class="col-md-4">
+                <input type="text" name="userKey" class="form-control" placeholder="Search by username..."
+                       th:value="${userKey}">
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+        </form>
+        <table class="table table-hover align-middle" th:if="${users != null and not #lists.isEmpty(users)}">
+            <thead class="table-light">
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Username</th>
+                <th scope="col">Email</th>
+                <th scope="col">Phone</th>
+                <th scope="col">Country</th>
+                <th scope="col" class="text-center">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user : ${users}">
+                <td th:text="${user.id}" />
+                <td th:text="${user.username}" />
+                <td th:text="${user.email}" />
+                <td th:text="${user.phone}" />
+                <td th:text="${user.country}" />
+                <td class="text-center">
+                    <a th:href="@{'/user/profile/' + ${user.username}}" class="btn btn-outline-info btn-sm me-1">
+                        Details
+                    </a>
+                    <a th:href="@{'/user/update/' + ${user.username}}" class="btn btn-outline-secondary btn-sm">
+                        Edit
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <!-- Empty Orders -->
+        <div class="col-12 text-center py-5" th:if="${users == null or #lists.isEmpty(users)}">
+            <div class="text-muted">
+                <svg class="mb-3" width="48" height="48" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <h4>No Users</h4>
+                <p>There are no users available.</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<hr>
+
+<!-- Order Section -->
+<div class="container orders-card">
+    <h2 class="section-title mb-4">Order Management</h2>
+
+    <div class="">
+        <!-- Order Managements -->
+        <form class="row mb-4" method="get" th:action="@{/admin}">
+            <div class="col-md-4">
+                <input type="text" name="orderKey" class="form-control" placeholder="Search by username..."
+                       th:value="${orderKey}">
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+        </form>
+        <table class="table table-hover align-middle" th:if="${orders != null and not #lists.isEmpty(orders)}">
+            <thead class="table-light">
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Experience</th>
+                <th scope="col">Customer</th>
+                <th scope="col">Value</th>
+                <th scope="col">Order Status</th>
+                <th scope="col">Last Updated</th>
+                <th scope="col" class="text-center">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="order : ${orders}">
+                <td th:text="${order.orderId}" />
+                <td th:text="${order.experienceInstance.experience.title}" />
+                <td th:text="${order.user.username}" />
+                <td th:text="${order.transactionValue}" />
+                <td th:text="${order.orderStatus}" />
+                <td th:text="${#strings.substring(order.updatedAt, 0, 19)}"></td>
+                <td class="text-center">
+                    <a th:href="@{'/orders/' + ${order.user.username} + '/details?orderId=' + ${order.orderId}}"
+                       class="btn btn-outline-primary btn-sm me-2">
+                        Details
+                    </a>
+                    <a th:if="${order.orderStatus == T(com.example.csis3275.entities.OrderStatus).BOOKED}">
+                        <form th:action="@{'/orders/' + ${order.user.username} + '/pay'}"
+                              method="post"
+                              style="display:inline;">
+                            <input type="hidden" name="paymentType" value="CREDIT_CARD" />
+                            <input type="hidden" name="orderId" th:value="${order.orderId}">
+                            <button type="submit"
+                                    class="btn btn-info btn-sm me-2"
+                                    onclick="return confirm('Are you sure this order has been paid?')">
+                                Paid
+                            </button>
+                        </form>
+                    </a>
+                    <a th:if="${order.orderStatus == T(com.example.csis3275.entities.OrderStatus).BOOKED
+                        or order.orderStatus == T(com.example.csis3275.entities.OrderStatus).PAID}">
+                        <form th:action="@{'/orders/' + ${order.user.getUsername()} + '/cancel'}" method="post" style="display:inline;">
+                            <input type="hidden" name="orderId" th:value="${order.orderId}">
+                            <button type="submit"
+                                    class="btn btn-danger btn-sm me-2"
+                                    onclick="return confirm('Are you sure you want to cancel this order?')">
+                                Cancel
+                            </button>
+                        </form>
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <!-- Empty Orders -->
+        <div class="col-12 text-center py-5" th:if="${orders == null or #lists.isEmpty(orders)}">
+            <div class="text-muted">
+                <svg class="mb-3" width="48" height="48" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <h4>No Orders</h4>
+                <p>There are no order available.</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<hr>
+
+<!-- Experiences Section -->
+<div class="container experiences-card">
+    <h2 class="section-title mb-4">Experience Management</h2>
+
+    <div class="">
+        <!-- Experience Managements -->
+        <form class="row mb-4" method="get" th:action="@{/admin}">
+            <div class="col-md-4">
+                <input type="text" name="experienceKey" class="form-control" placeholder="Search by experience..."
+                       th:value="${experienceKey}">
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+        </form>
+        <table class="table table-hover align-middle" th:if="${experienceInstances != null and not #lists.isEmpty(experienceInstances)}">
+            <thead class="table-light">
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Title</th>
+                <th scope="col">Available</th>
+                <th scope="col">Price</th>
+                <th scope="col">Start Time</th>
+                <th scope="col">End Time</th>
+                <th scope="col" class="text-center">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="experienceInstance : ${experienceInstances}">
+                <td th:text="${experienceInstance.id}" />
+                <td th:text="${experienceInstance.experience.title}" />
+                <td th:text="${experienceInstance.availableSlots}" />
+                <td th:text="${experienceInstance.price}" />
+                <td th:text="${#strings.substring(experienceInstance.startDateTime, 0, 19)}"></td>
+                <td th:text="${#strings.substring(experienceInstance.endDateTime, 0, 19)}"></td>
+                <td class="text-center">
+                    <a th:href="@{'/experience/detail/' + ${experienceInstance.experience.id}}" class="btn btn-outline-info btn-sm me-1">
+                        Details
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <!-- Empty Orders -->
+        <div class="col-12 text-center py-5" th:if="${experienceInstances == null or #lists.isEmpty(experienceInstances)}">
+            <div class="text-muted">
+                <svg class="mb-3" width="48" height="48" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <h4>No Experience</h4>
+                <p>There are no experiences available.</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+</body>
+</html>

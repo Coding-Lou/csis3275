@@ -7,7 +7,7 @@
 </head>
 <body>
 <div class="container mt-5">
-    <h2>Edit Profile</h2>
+    <h2 th:text="'Edit Profile - ' + ${user.username}"></h2>
     <form th:action="@{/user/update}" th:object="${user}" method="post">
         <input type="hidden" th:field="*{id}" />
 
@@ -32,7 +32,7 @@
             <input type="text" th:field="*{country}" class="form-control"/>
         </div>
         <button type="submit" class="btn btn-success">Save Changes</button>
-        <a th:href="@{'/user/' + ${user.username}}" class="btn btn-secondary ml-2">Cancel</a>
+        <a th:href="@{'/user/profile/' + ${user.username}}" class="btn btn-secondary ml-2">Cancel</a>
     </form>
 </div>
 </body>

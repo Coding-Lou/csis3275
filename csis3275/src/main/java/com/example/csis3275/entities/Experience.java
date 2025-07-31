@@ -12,14 +12,17 @@ public class Experience {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
+    @Column(columnDefinition = "TEXT")
     private String description;
     private String shortDescription;
     private String country;
     private String city;
     private String location;
     private int maxParticipants;
+    private int duration;
     private double price;
-    @OneToMany(mappedBy = "experience")
+    private boolean active = true;
+    @OneToMany(mappedBy = "experience", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ExperienceInstance> instances;
     @ManyToOne
     @JoinColumn(name = "user_id")

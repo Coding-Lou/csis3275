@@ -16,9 +16,9 @@ public class ExperienceInstance {
     @ManyToOne
     @JoinColumn(name = "experience_id")
     private Experience experience;
-    private LocalDateTime startDateTime;
-    private LocalDateTime endDateTime;
+    private String startDateTime;
+    private String endDateTime;
     private int availableSlots;
     private double price;
-
+    private boolean active = true;
 }
