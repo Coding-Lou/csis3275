@@ -106,7 +106,6 @@
                     </form>
                 </a>
 
-
                 <a th:if="${order.orderStatus == T(com.example.csis3275.entities.OrderStatus).BOOKED
                         or order.orderStatus == T(com.example.csis3275.entities.OrderStatus).PAID}">
                     <form th:action="@{'/orders/' + ${order.user.getUsername()} + '/cancel'}" method="post" style="display:inline;">

@@ -41,11 +41,15 @@ public class ExperienceController {
     }
 
     @GetMapping("/detail/{id}")
-    public String experienceDetailGet(@PathVariable int id, Model model) {
+    public String experienceDetailGet(HttpServletRequest request, @PathVariable int id, Model model) {
         Optional<Experience> experience = experienceRepository.findById((long) id);
-
+        User user = getCurrentUser(request);
+        if (user == null) {
+            user = new User();
+        }
         if (experience.isPresent()) {
             model.addAttribute("experience", experience.get());
+            model.addAttribute("user", user);
             return "experience-detail";
         } else {
             return "experience-search";
@@ -97,5 +101,20 @@ public class ExperienceController {
         orderRepository.save(order);
 
         return "redirect:/user/traveler/" + username;
+    }
+
+    private User getCurrentUser(HttpServletRequest request) {
+        String token = "";
+        for (Cookie cookie : request.getCookies()) {
+            if (cookie.getName().startsWith("user-token-")) {
+                token = cookie.getValue();
+            }
+        }
+        try {
+            return userRepository.getUserByUsername(jwtService.extractUsername(token));
+        } catch (Exception e) {
+            return null;
+        }
+
     }
 }

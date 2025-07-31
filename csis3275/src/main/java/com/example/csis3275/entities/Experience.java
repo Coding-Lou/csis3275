@@ -21,6 +21,7 @@ public class Experience {
     private int maxParticipants;
     private int duration;
     private double price;
+    private boolean active = true;
     @OneToMany(mappedBy = "experience", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ExperienceInstance> instances;
     @ManyToOne

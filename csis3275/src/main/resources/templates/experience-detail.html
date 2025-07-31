@@ -75,17 +75,16 @@
                         <div class="d-flex align-items-center">
                             <span class="h5 text-dark me-3" th:text="'$' + ${instance.price ?: experience.price}">$0</span>
                             <span class="text-muted me-3" th:text="${instance.availableSlots + ' slots left'}">Available spots</span>
-                            <div>
+
+                            <div th:if="${!user.isAdmin}">
                                 <form th:action="@{/experience/book}" method="post" class="d-flex">
                                     <input type="hidden" name="instanceId" th:value="${instance.id}">
                                     <input type="number" name="quantity" min="1" max="${instance.availableSlots}" value="1" style="width: 70px;">
-                                    <button class="btn btn-primary" type="submit">Book Now</button>
+                                    <button class="btn btn-primary ms-2" type="submit">Book Now</button>
                                 </form>
                             </div>
                         </div>
-
                     </div>
-
                 </div>
             </div>
 

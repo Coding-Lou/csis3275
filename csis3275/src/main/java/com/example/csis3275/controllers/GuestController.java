@@ -3,6 +3,7 @@ package com.example.csis3275.controllers;
 import com.example.csis3275.entities.Experience;
 import com.example.csis3275.entities.User;
 import com.example.csis3275.repositories.ExperienceRepository;
+import com.example.csis3275.repositories.UserRepository;
 import com.example.csis3275.services.JwtService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,17 +22,22 @@ public class GuestController {
     @Autowired
     ExperienceRepository experienceRepository;
     @Autowired
+    UserRepository userRepository;
+    @Autowired
     JwtService jwtService;
 
     @GetMapping("/")
     public String home(Model model, HttpServletRequest request, HttpSession session) {
-
         String username = checkValidToken(request);
         if (username.isEmpty()) {
             List<Experience> experiences = experienceRepository.findAll();
             model.addAttribute("experiences", experiences);
             return "index";
         } else {
+            User user = userRepository.getUserByUsername(username);
+            if (user.isAdmin()) {
+                return "redirect:/admin";
+            }
             Cookie[] cookies = request.getCookies();
             for (Cookie cookie : cookies) {
                 if (cookie.getName().startsWith("user-role")) {

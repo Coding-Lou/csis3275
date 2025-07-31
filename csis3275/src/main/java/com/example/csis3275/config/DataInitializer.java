@@ -122,6 +122,7 @@ public class DataInitializer {
 
         // Instance 2: Saturday at 7:00 PM
         ExperienceInstance instance2 = new ExperienceInstance();
+        baseTime = LocalDateTime.now().plusDays(7);
         instance2.setExperience(experience);
         instance2.setStartDateTime(baseTime.withHour(15).withMinute(0).withSecond(0).format(formatter));
         instance2.setEndDateTime(baseTime.withHour(15 + instance2.getExperience().getDuration()).withMinute(0).withSecond(0).format(formatter));
@@ -131,6 +132,7 @@ public class DataInitializer {
 
         // Instance 3: Sunday at 2:00 PM (afternoon option)
         ExperienceInstance instance3 = new ExperienceInstance();
+        baseTime = LocalDateTime.now().plusDays(14);
         instance3.setExperience(experience);
         instance3.setStartDateTime(baseTime.withHour(10).withMinute(0).withSecond(0).format(formatter));
         instance3.setEndDateTime(baseTime.withHour(10 + instance3.getExperience().getDuration()).withMinute(0).withSecond(0).format(formatter));
@@ -151,16 +153,37 @@ public class DataInitializer {
         User user1 = new User();
         user1.setUsername("sora");
         user1.setPasswordHash(passwordEncoder.encode("sora123"));
+        user1.setFirstName("Sora");
+        user1.setLastName("Smith");
+        user1.setEmail("sora@gmail.com");
+        user1.setCountry("Canada");
+        user1.setPhone("7780000001");
         userRepository.save(user1);
 
         User user2 = new User();
         user2.setUsername("kairi");
         user2.setPasswordHash(passwordEncoder.encode("kairi456"));
+        user2.setFirstName("kairi");
+        user2.setLastName("Jordan");
+        user2.setEmail("kairi@gmail.com");
+        user2.setCountry("USA");
+        user2.setPhone("7780000002");
         userRepository.save(user2);
 
         User user3 = new User();
         user3.setUsername("riku");
         user3.setPasswordHash(passwordEncoder.encode("riku789"));
+        user3.setFirstName("riku");
+        user3.setLastName("Wales");
+        user3.setEmail("riku@gmail.com");
+        user3.setCountry("Japan");
+        user3.setPhone("7780000003");
         userRepository.save(user3);
+
+        User admin = new User();
+        admin.setUsername("admin");
+        admin.setPasswordHash(passwordEncoder.encode("admin"));
+        admin.setAdmin(true);
+        userRepository.save(admin);
     }
 }

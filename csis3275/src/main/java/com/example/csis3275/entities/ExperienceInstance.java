@@ -20,5 +20,5 @@ public class ExperienceInstance {
     private String endDateTime;
     private int availableSlots;
     private double price;
-
+    private boolean active = true;
 }

@@ -54,11 +54,6 @@ public class GuideController {
 
         User user = userOptional.get();
 
-        if(!userOptional.get().isGuide()) {
-            model.addAttribute("errorMessage", "User is not a guide.");
-            return "error";
-        }
-
         model.addAttribute("user", user);
 
         List<Order> orders = orderRepository.findOrdersByUserId(user.getId());
@@ -89,11 +84,6 @@ public class GuideController {
         User user = userOptional.get();
         Experience experience = new Experience();
 
-        if(!userOptional.get().isGuide()) {
-
-            model.addAttribute("errorMessage", "User is not a guide.");
-            return "error";
-        }
 
         model.addAttribute("experience", experience);
         model.addAttribute("user", user);
@@ -118,29 +108,11 @@ public class GuideController {
             experienceInstance.setExperience(experience);
         }
 
-        
         experienceRepository.save(experience);
         System.out.println("EXPERIENCE INSTANCES: ");
         return "redirect:/user/guide/" + username;
     }
 
-    private boolean checkValidToken(HttpServletRequest request, String username) {
-        String token = "";
-        for (Cookie cookie : request.getCookies()) {
-            if (("user-token-" + username).equals(cookie.getName())) {
-                token = cookie.getValue();
-            }
-        }
-
-        if(token.isEmpty()) return false;
-
-        try {
-            jwtService.extractUsername(token);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
 
     @GetMapping("/{username}/{experienceId}/update-experience")
     public String UpdateExperience(HttpServletRequest request, @PathVariable String username, @PathVariable String experienceId, Model model) {
@@ -213,4 +185,23 @@ public class GuideController {
             return "update-experience";
         }
     }
+
+    private boolean checkValidToken(HttpServletRequest request, String username) {
+        String token = "";
+        for (Cookie cookie : request.getCookies()) {
+            if (("user-token-" + username).equals(cookie.getName())) {
+                token = cookie.getValue();
+            }
+        }
+
+        if(token.isEmpty()) return false;
+
+        try {
+            jwtService.extractUsername(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
 }

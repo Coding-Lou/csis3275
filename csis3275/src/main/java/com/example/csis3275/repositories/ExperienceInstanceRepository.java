@@ -19,6 +19,9 @@ public interface ExperienceInstanceRepository extends JpaRepository<ExperienceIn
     
     List<ExperienceInstance> findByExperienceId(Long experienceId);
 
+    @Query("SELECT e from ExperienceInstance e where LOWER(e.experience.title) LIKE lower( concat('%' , :experienceKey ,'%')) ")
+    List<ExperienceInstance> findByTitleContainingIgnoreCase(@Param("experienceKey") String experienceKey);
+
     @Modifying
     @Transactional
     @Query("update ExperienceInstance e set e.availableSlots = e.availableSlots + :changeQuantity where e.id = :id")
