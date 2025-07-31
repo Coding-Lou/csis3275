@@ -72,6 +72,35 @@ public class GuideController {
         return "guide-home";
     }
 
+    @PostMapping("/{username}")
+    public String postGuideHome(HttpServletRequest request, @PathVariable String username, Model model, @RequestParam String search) {
+        if(!checkValidToken(request, username)) {
+            model.addAttribute("errorMessage", "User with username '" + username + "' not logged in");
+            return "error";
+        }
+
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        if (userOptional.isEmpty()) {
+            model.addAttribute("errorMessage", "User with username '" + username + "' was not found.");
+            return "error";
+        }
+
+        User user = userOptional.get();
+
+        model.addAttribute("user", user);
+
+        List<Order> orders = orderRepository.findOrdersByUserId(user.getId());
+
+        model.addAttribute("orders", orders);
+
+        List<Experience> experiences = experienceRepository.findByTitleContainingIgnoreCase(search);
+        List<Experience> myExperiences = experienceRepository.findByUserId(user.getId());
+
+        model.addAttribute("experiences", experiences);
+        model.addAttribute("myExperiences", myExperiences);
+        return "guide-home";
+    }
+
     @GetMapping("/{username}/create-experience")
     public String GetCreateExperience(HttpServletRequest request, @PathVariable String username, Model model) {
         if(!checkValidToken(request, username)) {

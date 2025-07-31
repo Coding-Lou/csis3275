@@ -133,6 +133,32 @@ public class UserController {
         return "travellerHome";
     }
 
+    @PostMapping("/traveler/{username}")
+    public String postTravelerHome(HttpServletRequest request, @PathVariable String username, Model model, @RequestParam String search) {
+
+        if(!checkValidToken(request, username)) {
+            model.addAttribute("errorMessage", "User with username '" + username + "' not logged in");
+            return "error";
+        }
+
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        if (userOptional.isEmpty()) {
+            model.addAttribute("errorMessage", "User with username '" + username + "' was not found.");
+            return "error";
+        }
+        User user = userOptional.get();
+        model.addAttribute("user", user);
+
+        List<Order> orders = orderRepository.findOrdersByUserId(user.getId());
+
+        model.addAttribute("orders", orders);
+
+
+        List<Experience> experiences = experienceRepository.findByTitleContainingIgnoreCase(search);
+        model.addAttribute("experiences", experiences);
+        return "travellerHome";
+    }
+
     @GetMapping("/profile/{username}")
     public String getUserProfile(HttpServletRequest request, @PathVariable String username, Model model) {
 
