@@ -146,10 +146,31 @@
 <br/>
 <br/>
 
+<div class="container mb-5">
+    <form th:action="@{'/user/guide/' + ${user.username}}" method="post" class="input-group input-group-lg shadow-sm">
+        <input
+                type="text"
+                name="search"
+                class="form-control"
+                placeholder="Search destinations, activities, and more..."
+                th:value="${param.search}">
+        <div class="input-group-append">
+            <button class="btn btn-primary" type="submit">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" viewBox="0 0 24 24">
+                    <path d="M10 2a8 8 0 015.29 13.71l4.3 4.3a1 1 0 01-1.42 1.42l-4.3-4.3A8 8 0 1110 2zm0 2a6 6 0 100 12 6 6 0 000-12z"/>
+                </svg>
+                <span class="ml-2">Search</span>
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Experiences Section -->
 <div class="container">
     <h2 class="section-title mb-4">Experiences Found</h2>
     <div class="row">
 
+        <!-- Experience Card -->
         <div class="col-md-4 mb-4" th:each="experience : ${experiences}">
             <a th:href="@{/experience/detail/{id}(id=${experience.id})}" class="text-decoration-none text-dark">
                 <div class="card h-100 shadow-sm">
@@ -172,6 +193,7 @@
             </a>
         </div>
 
+        <!-- No Experiences Fallback -->
         <div class="col-12 text-center py-5" th:if="${#lists.isEmpty(experiences)}">
             <div class="text-muted">
                 <svg class="mb-3" width="48" height="48" fill="currentColor" viewBox="0 0 24 24">
